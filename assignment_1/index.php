@@ -80,15 +80,17 @@
             </div>
           </div>
         </div>
+
+        <hr class="my-4" />
  
         <div class='row px-5'>
           <div class='container'>
             <h3 class='text-center'> Contact Me </h3>
             <br />
             <div class='row'>
-              <span class='col-sm-4 text-center display-4'> <a class='badge badge-primary p-3 text-white' href='mailto:<?php echo $user['email'] ?>'> Email </a> </span>
-              <span class='col-sm-4 text-center display-4'> <a class='badge badge-primary p-3 text-white' href='https://github.com/Seacant'> Github </a> </span>
-              <span class='col-sm-4 text-center display-4'> <a class='badge badge-primary p-3 text-white' href='https://www.linkedin.com/in/travis-fletcher-a13771173/'> Linkedin </a> </span>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='mailto:<?php echo $user['email'] ?>'> Email </a> </span>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='https://github.com/Seacant'> Github </a> </span>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='https://www.linkedin.com/in/travis-fletcher-a13771173/'> Linkedin </a> </span>
             </ul>
           </div>
         </div>
