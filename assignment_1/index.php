@@ -2,13 +2,14 @@
   $user = [
     'name'      => 'Travis Fletcher',
     'email'     => 'travis@tfletch.tech',
-    'age'       => 21,
+    'age'       => '21',
     'enrolment' => [
+      'graduation_year' => '2021',
       'major' => ['Data Science'],
-      'minor' => ['Management']
+      'minor' => ['Management', 'Computer Science']
     ],
     'avatar' => "https://avatars0.githubusercontent.com/u/9843883",
-    'city'   => 'Cincinnati',
+    'city'   => 'Cincinnati, Ohio',
 
     'elevator_pitch' => "
       Hello. My name is Travis Fletcher. I am a Data Science major with a minor
@@ -38,16 +39,17 @@
           <div class='col-sm-10'>
             <h1 class="display-4"><?php echo $user['name']; ?></h2>
             <p class="lead"><?php 
-              echo join(', ', $user['enrolment']['major']) 
+              echo $user['enrolment']['graduation_year'] . ' ' . join(', ', $user['enrolment']['major']) 
             ?>; <?php
-              echo join(', ', $user['enrolment']['minor']) 
-            ?> Minor </p>
+              echo join(' & ', $user['enrolment']['minor']) 
+            ?> Minor</p>
+            <p><?php echo $user['city'] ?></p>
           </div>
 
           <div class='col-sm-2'>
             <img
-              height=100
-              width=100
+              height=150
+              width=150
               src='<?php echo $user['avatar'] ?>'
             />
           </div>
@@ -76,6 +78,18 @@
               figured I should take a class on it. I'm looking forward to 
               seeing what I learn this semester.
             </div>
+          </div>
+        </div>
+ 
+        <div class='row px-5'>
+          <div class='container'>
+            <h3 class='text-center'> Contact Me </h3>
+            <br />
+            <div class='row'>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-primary p-3 text-white' href='mailto:<?php echo $user['email'] ?>'> Email </a> </span>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-primary p-3 text-white' href='https://github.com/Seacant'> Github </a> </span>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-primary p-3 text-white' href='https://www.linkedin.com/in/travis-fletcher-a13771173/'> Linkedin </a> </span>
+            </ul>
           </div>
         </div>
 
