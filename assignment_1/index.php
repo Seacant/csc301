@@ -13,10 +13,10 @@
 
     'elevator_pitch' => "
       Hello. My name is Travis Fletcher. I am a Data Science major with a minor
-      in Data Science. I am a Software Engineer at an EdTech company called
-      Certica Solutions, and I work full-time between classes. I've been
-      there for 5 years and love going to work every day. In my free time, I
-      like to cook and work on personal projects.
+      in Management and Computer Science. I am a Software Engineer at an EdTech
+      company called Certica Solutions, and I work full-time between classes.
+      I've been there for 5 years and love going to work every day. In my free
+      time, I like to cook and work on personal projects.
     "
   ];
 ?>
