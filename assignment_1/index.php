@@ -30,6 +30,12 @@
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
+    <style>
+      .long-text {
+        text-align: justify;
+      }
+    </style>
+
   </head>
 
   <body>
@@ -43,14 +49,14 @@
             ?>; <?php
               echo join(' & ', $user['enrolment']['minor']) 
             ?> Minor</p>
-            <p><?php echo $user['city'] ?></p>
+            <p><?= $user['city'] ?></p>
           </div>
 
           <div class='col-sm-2'>
             <img
               height=150
               width=150
-              src='<?php echo $user['avatar'] ?>'
+              src='<?= $user['avatar'] ?>'
             />
           </div>
         </div>
@@ -61,9 +67,7 @@
           <div class='container'>
             <h3 class='text-center'>Background</h3>
             <br />
-            <div class='container lead'><?php
-                echo $user['elevator_pitch']
-            ?></div>
+            <div class='container lead long-text'><?= $user['elevator_pitch'] ?></div>
           </div>
         </div>
 
@@ -73,7 +77,7 @@
           <div class='container'>
             <h3 class='text-center'> Reason For Taking CSC-301 </h3>
             <br />
-            <div class='container lead'>
+            <div class='container lead long-text'>
               I am taking this class becase it's what I do for a living so I
               figured I should take a class on it. I'm looking forward to 
               seeing what I learn this semester.
@@ -88,7 +92,7 @@
             <h3 class='text-center'> Contact Me </h3>
             <br />
             <div class='row'>
-              <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='mailto:<?php echo $user['email'] ?>'> Email </a> </span>
+              <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='mailto:<?= $user['email'] ?>'> Email </a> </span>
               <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='https://github.com/Seacant'> Github </a> </span>
               <span class='col-sm-4 text-center display-4'> <a class='badge badge-secondary p-3 text-white' href='https://www.linkedin.com/in/travis-fletcher-a13771173/'> Linkedin </a> </span>
             </ul>
