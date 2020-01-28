@@ -11,14 +11,14 @@ class Users {
     ]
   ];
 
-  public function get_user_by_id($user_id) {
+  public function get_user_by_id(int $user_id) : ?User {
     if(!isset($this->users[$user_id])){
       return null;
     }
     return $this->_fill_user($this->users[$user_id]);
   }
 
-  private function _fill_user($Iuser) {
+  private function _fill_user(array $Iuser) : User{
     $user = new User();
     $user->id   = $Iuser['id'];
     $user->name = $Iuser['name'];

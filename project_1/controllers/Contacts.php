@@ -123,14 +123,14 @@ class Contacts {
   ];
 
 
-  public function find_contacts_by_user($user){
+  public function find_contacts_by_user(User $user): array {
     if(!isset($this->contacts_by_user[$user->id])){
       return [];
     }
     return array_map( [$this, '_fill_contact'], $this->contacts_by_user[$user->id]);
   }
 
-  public function get_contact_by_id($user, $contact_id){
+  public function get_contact_by_id($user, $contact_id): ?Contact {
     if(!isset($this->contacts_by_user[$user->id])){
       return null;
     }
@@ -145,7 +145,7 @@ class Contacts {
     return array_pop($maybe_contact);
   }
 
-  private function _fill_contact($Icontact){
+  private function _fill_contact(array $Icontact): Contact {
     $contact = new Contact();
     $contact->id = $Icontact['id'];
     $contact->name = $Icontact['name'];
@@ -153,7 +153,7 @@ class Contacts {
     return $contact;
   }
 
-  private function _fill_contact_record($IcontactRecord){
+  private function _fill_contact_record(array $IcontactRecord): ContactRecord {
     $contactRecord = new ContactRecord();
     $contactRecord->type = $IcontactRecord['type'];
     $contactRecord->value = $IcontactRecord['value'];

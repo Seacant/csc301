@@ -37,7 +37,7 @@
   <body>
     <main class='container'>
       <div> 
-        <a class='text-secondary' href='?'>Go Back</a>
+        <a class='text-secondary' href='index.php'>Go Back</a>
       </div>
       <div class="jumbotron">
         <div class='row'>

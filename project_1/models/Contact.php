@@ -1,7 +1,7 @@
 <?
 class Contact {
-  public $id;
-  public $name;
-  public $records;
+  public int $id;
+  public string $name;
+  public array $records;
 }
 ?>

@@ -1,6 +1,7 @@
 <?
 class ContactRecord {
-  public $type;
-  public $value;
+  // TODO: Enum for ContactRecordType
+  public string $type;
+  public string $value;
 }
 ?>

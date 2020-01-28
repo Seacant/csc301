@@ -1,6 +1,6 @@
 <?
 class User {
-  public $id;
-  public $name;
+  public int $id;
+  public string $name;
 }
 ?>
