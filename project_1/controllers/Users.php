@@ -4,12 +4,11 @@ require('models/User.php');
 
 class Users {
   // TODO: Database
-  private $users = [
-    1 => [
-      "id" => 1,
-      "name" => 'Travis Fletcher'
-    ]
-  ];
+  private $users;
+
+  public function __construct(){
+    $this->users = json_decode(file_get_contents('data/users.json'), true);
+  }
 
   public function get_user_by_id(int $user_id) : ?User {
     if(!isset($this->users[$user_id])){
