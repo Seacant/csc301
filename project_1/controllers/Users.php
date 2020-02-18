@@ -1,6 +1,6 @@
 <?
 
-require('models/User.php');
+require_once('models/User.php');
 
 class Users {
   // TODO: Database
@@ -8,6 +8,10 @@ class Users {
 
   public function __construct(){
     $this->users = json_decode(file_get_contents('data/users.json'), true);
+  }
+
+  public function persist(){
+    file_put_contents('data/users.json', json_encode($this->users));
   }
 
   public function get_user_by_id(int $user_id) : ?User {

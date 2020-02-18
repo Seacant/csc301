@@ -8,7 +8,7 @@
   // TODO: Login
   $user = $UsersController->get_user_by_id(1);
 
-  $contact = $ContactsController->get_contact_by_id($user, $_GET['contact_id']);
+  $contact = $ContactsController->get_contact_by_id($_GET['contact_id']);
 
   if($contact == null){
     header('Location: index.php');
