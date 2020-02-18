@@ -19,14 +19,9 @@ try {
     json_decode(file_get_contents('php://input'), true)
   );
 } catch (Exception $e) {
+  http_response_code(400);
   echo json_encode([
     'error' => $e->getMessage()
-  ]);
-}
-
-function not_found_error(){
-  echo json_encode([
-    'error' => 'You must specify a valid operation'
   ]);
 }
 
@@ -45,6 +40,10 @@ function update_contact($data){ global $contactsController;
 function delete_contact($data){ global $contactsController; 
   echo json_encode($contactsController->delete($data));
   $contactsController->persist();
+}
+
+function get_contact_by_id($data) { global $contactsController;
+  echo json_encode($contactsController->get_contact_by_id($_GET['id']));
 }
 
 ?>
