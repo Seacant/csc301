@@ -72,6 +72,7 @@
             .map((index, html) => {
               let $record = $(html);
               return {
+                id: $record.find('.record-id').val() || undefined,
                 type: $record.find('.record-type').val(),
                 value: $record.find('.record-value').val()
               }
@@ -113,15 +114,27 @@
         $('.edit-form #edit-form-records ul').append(`
           <li class='list-group-item input-group record'>
             <div class='form-row'>
+              <input type='hidden' class='record-id' value='${record.id || ''}'/>
               <select class='custom-select col-md-3 bg-dark text-white record-type'>
                 <option ${record.type === 'Phone'   ? 'selected' : ''} value='Phone'>Phone</option>
                 <option ${record.type === 'Email'   ? 'selected' : ''} value='Email'>Email</option>
                 <option ${record.type === 'Address' ? 'selected' : ''} value='Address'>Address</option>
               </select>
-              <input type='text' class='form-control col-md-9 bg-dark text-white record-value' value='${record.value}'/>
+              <input type='text' class='form-control col-md-8 bg-dark text-white record-value' value='${record.value}'/>
+              <a href='#' class='col-md-1'>
+                <i
+                  style='line-height: 36px;'
+                  class='delete-contact-record material-icons text-danger float-right align-middle'
+                  data-id='${record.id}'
+                >delete</i>
+              </a>
             </div>
           </li>
         `)
+      })
+
+      $('.delete-contact-record').click(event => {
+        $(event.target).closest('.record').remove();
       })
 
       $('.edit-form #edit-form-records ul').append(`
@@ -131,9 +144,23 @@
       `)
 
       $('#edit-form-add-record').click((event) => {
-        let data = $(event.target)
-          .closest('.edit-form')
-          .data('contact')
+        $form = $('.edit-form');
+        let data = {
+          id: $form.closest('.contact-root').data('id'),
+          name: $form.find('#edit-name').val(),
+          records: $form
+            .find('#edit-form-records ul')
+            .children('.record')
+            .map((index, html) => {
+              let $record = $(html);
+              return {
+                id: $record.find('.record-id').val() || undefined,
+                type: $record.find('.record-type').val(),
+                value: $record.find('.record-value').val()
+              }
+            })
+            .get()
+        };
 
         data.records.push({
           type: 'Phone',

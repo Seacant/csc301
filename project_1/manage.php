@@ -19,6 +19,7 @@ try {
     json_decode(file_get_contents('php://input'), true)
   );
 } catch (Exception $e) {
+  error_log($e->getMessage());
   http_response_code(400);
   echo json_encode([
     'error' => $e->getMessage()
@@ -26,20 +27,16 @@ try {
 }
 
 function create_contact($data) { global $contactsController;
-
   echo json_encode($contactsController->create($data));
-  $contactsController->persist();
 
   http_response_code(201);
 }
 
 function update_contact($data){ global $contactsController;
   echo json_encode($contactsController->update($data));
-  $contactsController->persist();
 }
 function delete_contact($data){ global $contactsController; 
   echo json_encode($contactsController->delete($data));
-  $contactsController->persist();
 }
 
 function get_contact_by_id($data) { global $contactsController;
