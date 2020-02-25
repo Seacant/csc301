@@ -1,12 +1,18 @@
 <?php
+  session_start();
+
+  if(!isset($_SESSION['user_id'])){
+    header('Location: login.php');
+    die();
+  }
+
   require_once('controllers/Users.php');
   require_once('controllers/Contacts.php');
 
   $UsersController = new Users();
   $ContactsController = new Contacts();
 
-  // TODO: Login
-  $user = $UsersController->get_user_by_id(1);
+  $user = $UsersController->get_user_by_id($_SESSION['user_id']);
 
   $contacts = $ContactsController->find_contacts_by_user($user);
 ?>
@@ -24,192 +30,184 @@
     <!-- Material Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <style>
-      .long-text {
-        text-align: justify;
-      }
-    </style>
-    
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"> </script>
 
+    <!-- Code for form interactions & AJAX -->
     <script>
 
-    function edit_form(target, json) {
+      function edit_form(target, json) {
 
-      const contact_row = target.closest('.contact-root')
+        const contact_row = target.closest('.contact-root')
 
-      // Clear other edit forms
-      $('.edit-form').remove()
+        // Clear other edit forms
+        $('.edit-form').remove()
 
-      // Open new edit form
-      contact_row.append(`
-        <form class='edit-form'>
-          <ul class='list-group'>
-            <li class='list-group-item form-group'>
-              <label class='text-info' for='edit-name'>Name: </label>
-              <input class='bg-dark text-white form-control' id='edit-name' value='${json.name}'/>
-            </li>
-            <li class='list-group-item form-group' id='edit-form-records'>
-              <p class='text-info'>Records:</p>
-              <ul class='list-group'></ul>
-            </li>
-          </ul>
-          <div style='float:right;'>
-            <button class='btn btn-success'>Save</button>
-            <button class='btn btn-muted' id='edit-form-cancel' type='button'>Cancel</button>
-          </div>
-        </form>
-      `)
+        // Open new edit form
+        contact_row.append(`
+          <form class='edit-form'>
+            <ul class='list-group'>
+              <li class='list-group-item form-group'>
+                <label class='text-info' for='edit-name'>Name: </label>
+                <input class='bg-dark text-white form-control' id='edit-name' value='${json.name}'/>
+              </li>
+              <li class='list-group-item form-group' id='edit-form-records'>
+                <p class='text-info'>Records:</p>
+                <ul class='list-group'></ul>
+              </li>
+            </ul>
+            <div style='float:right;'>
+              <button class='btn btn-success'>Save</button>
+              <button class='btn btn-muted' id='edit-form-cancel' type='button'>Cancel</button>
+            </div>
+          </form>
+        `)
 
-      $('.edit-form').submit((self) => {
-        const $form = $(self.target);
-        let data = {
-          id: $form.closest('.contact-root').data('id'),
-          name: $form.find('#edit-name').val(),
-          records: $form
-            .find('#edit-form-records ul')
-            .children('.record')
-            .map((index, html) => {
-              let $record = $(html);
-              return {
-                id: $record.find('.record-id').val() || undefined,
-                type: $record.find('.record-type').val(),
-                value: $record.find('.record-value').val()
-              }
+        $('.edit-form').submit((self) => {
+          const $form = $(self.target);
+          let data = {
+            id: $form.closest('.contact-root').data('id'),
+            name: $form.find('#edit-name').val(),
+            records: $form
+              .find('#edit-form-records ul')
+              .children('.record')
+              .map((index, html) => {
+                let $record = $(html);
+                return {
+                  id: $record.find('.record-id').val() || undefined,
+                  type: $record.find('.record-type').val(),
+                  value: $record.find('.record-value').val()
+                }
+              })
+              .get()
+          };
+
+          if(data.id === 'new'){
+            fetch('/project_1/manage.php?operation=create_contact', {
+              method: 'post',
+              body: JSON.stringify(data),
+              headers: {
+                'Accept': 'application/json'
+              },
+              credentials: 'same-origin'
             })
-            .get()
-        };
+            .then(() => location.reload());
+          }
+          else {
+            fetch('/project_1/manage.php?operation=update_contact', {
+              method: 'post',
+              body: JSON.stringify(data),
+              headers: {
+                'Accept': 'application/json'
+              },
+              credentials: 'same-origin'
+            })
+            .then(() => location.reload());
+          }
+        })
 
-        if(data.id === 'new'){
-          // TODO: Login
-          data.user_id = 1;
+        $('#edit-form-cancel').click(() => $('.edit-form').remove())
 
-          fetch('/project_1/manage.php?operation=create_contact', {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {
-              'Accept': 'application/json'
-            },
-            credentials: 'same-origin'
-          })
-          .then(() => location.reload());
-        }
-        else {
-          fetch('/project_1/manage.php?operation=update_contact', {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {
-              'Accept': 'application/json'
-            },
-            credentials: 'same-origin'
-          })
-          .then(() => location.reload());
-        }
-      })
+        
+        json.records.forEach((record) => {
+          $('.edit-form #edit-form-records ul').append(`
+            <li class='list-group-item input-group record'>
+              <div class='form-row'>
+                <input type='hidden' class='record-id' value='${record.id || ''}'/>
+                <select class='custom-select col-md-3 bg-dark text-white record-type'>
+                  <option ${record.type === 'Phone'   ? 'selected' : ''} value='Phone'>Phone</option>
+                  <option ${record.type === 'Email'   ? 'selected' : ''} value='Email'>Email</option>
+                  <option ${record.type === 'Address' ? 'selected' : ''} value='Address'>Address</option>
+                </select>
+                <input type='text' class='form-control col-md-8 bg-dark text-white record-value' value='${record.value}'/>
+                <a href='#' class='col-md-1'>
+                  <i
+                    style='line-height: 36px;'
+                    class='delete-contact-record material-icons text-danger float-right align-middle'
+                    data-id='${record.id}'
+                  >delete</i>
+                </a>
+              </div>
+            </li>
+          `)
+        })
 
-      $('#edit-form-cancel').click(() => $('.edit-form').remove())
+        $('.delete-contact-record').click(event => {
+          $(event.target).closest('.record').remove();
+        })
 
-      
-      json.records.forEach((record) => {
         $('.edit-form #edit-form-records ul').append(`
-          <li class='list-group-item input-group record'>
-            <div class='form-row'>
-              <input type='hidden' class='record-id' value='${record.id || ''}'/>
-              <select class='custom-select col-md-3 bg-dark text-white record-type'>
-                <option ${record.type === 'Phone'   ? 'selected' : ''} value='Phone'>Phone</option>
-                <option ${record.type === 'Email'   ? 'selected' : ''} value='Email'>Email</option>
-                <option ${record.type === 'Address' ? 'selected' : ''} value='Address'>Address</option>
-              </select>
-              <input type='text' class='form-control col-md-8 bg-dark text-white record-value' value='${record.value}'/>
-              <a href='#' class='col-md-1'>
-                <i
-                  style='line-height: 36px;'
-                  class='delete-contact-record material-icons text-danger float-right align-middle'
-                  data-id='${record.id}'
-                >delete</i>
-              </a>
-            </div>
+          <li class='list-group-item'>
+            <a href='#' class='text-muted' id='edit-form-add-record'>Add More</a>
           </li>
         `)
-      })
 
-      $('.delete-contact-record').click(event => {
-        $(event.target).closest('.record').remove();
-      })
+        $('#edit-form-add-record').click((event) => {
+          $form = $('.edit-form');
+          let data = {
+            id: $form.closest('.contact-root').data('id'),
+            name: $form.find('#edit-name').val(),
+            records: $form
+              .find('#edit-form-records ul')
+              .children('.record')
+              .map((index, html) => {
+                let $record = $(html);
+                return {
+                  id: $record.find('.record-id').val() || undefined,
+                  type: $record.find('.record-type').val(),
+                  value: $record.find('.record-value').val()
+                }
+              })
+              .get()
+          };
 
-      $('.edit-form #edit-form-records ul').append(`
-        <li class='list-group-item'>
-          <a href='#' class='text-muted' id='edit-form-add-record'>Add More</a>
-        </li>
-      `)
-
-      $('#edit-form-add-record').click((event) => {
-        $form = $('.edit-form');
-        let data = {
-          id: $form.closest('.contact-root').data('id'),
-          name: $form.find('#edit-name').val(),
-          records: $form
-            .find('#edit-form-records ul')
-            .children('.record')
-            .map((index, html) => {
-              let $record = $(html);
-              return {
-                id: $record.find('.record-id').val() || undefined,
-                type: $record.find('.record-type').val(),
-                value: $record.find('.record-value').val()
-              }
-            })
-            .get()
-        };
-
-        data.records.push({
-          type: 'Phone',
-          value: ''
-        })
-
-        edit_form($(event.target), data);
-      })
-
-      $('.edit-form').data('contact', json);     
-    }
-    
-    $(document).ready(() => {
-      $('.edit_contact').click((self) => {
-        fetch(`/project_1/manage.php?operation=get_contact_by_id&id=${$(self.target).data('id')}`)
-          .then(res => res.json())
-          .then((json) => {
-            edit_form($(self.target), json);
+          data.records.push({
+            type: 'Phone',
+            value: ''
           })
-      })
 
-      $('.delete_contact').click(self => {
-        fetch('/project_1/manage.php?operation=delete_contact', {
-          method: 'POST',
-          body: JSON.stringify(
-            {
-              id: $(self.target).data('id'),
-              user_id: 1 // TODO: User Auth
-            }
-          )
+          edit_form($(event.target), data);
         })
-        .then(() => location.reload())
-      })
 
-      $('.add_contact').click(self => {
-        $('.user_contacts li:not(.contact-root)').before(`
-          <li class='list-group-item contact-root contact-new' data-id='new'>
-            <div class="d-flex justify-content-between align-items-center">
-              <a href='#'> New Contact </a>
-            </div>
-          </li>
-        `)
+        $('.edit-form').data('contact', json);     
+      }
+      
+      $(document).ready(() => {
+        $('.edit_contact').click((self) => {
+          fetch(`/project_1/manage.php?operation=get_contact_by_id&id=${$(self.target).data('id')}`)
+            .then(res => res.json())
+            .then((json) => {
+              edit_form($(self.target), json);
+            })
+        })
 
-        edit_form($('.contact-new'), {
-          name: '',
-          records: []
+        $('.delete_contact').click(self => {
+          fetch('/project_1/manage.php?operation=delete_contact', {
+            method: 'POST',
+            body: JSON.stringify(
+              {
+                id: $(self.target).data('id'),
+                user_id: 1 // TODO: User Auth
+              }
+            )
+          })
+          .then(() => location.reload())
+        })
+
+        $('.add_contact').click(self => {
+          $('.user_contacts li:not(.contact-root)').before(`
+            <li class='list-group-item contact-root contact-new' data-id='new'>
+              <div class="d-flex justify-content-between align-items-center">
+                <a href='#'> New Contact </a>
+              </div>
+            </li>
+          `)
+
+          edit_form($('.contact-new'), {
+            name: '',
+            records: []
+          })
         })
       })
-    })
     </script>
 
   </head>

@@ -5,15 +5,7 @@ require_once('models/ContactRecord.php');
 require_once('utilities/Database.php');
 
 class Contacts {
-  // TODO: Database
-  private array $contacts_by_user;
-  private array $contacts;
-  
-  // Dirty, dirty way to hold auto_increment counts until I can switch to MySQL
-  private array $schema;
-
   private $conn;
-
 
   public function find_contacts_by_user(User $user): array {
     $sth = $this->conn->prepare('
@@ -62,10 +54,9 @@ class Contacts {
           ]
         );
       }
-
     }
 
-    return (array_map([$this, '_fill_contact'], $contacts));
+    return (array_map([$this, '_fill_contact'], $contacts ?? []));
   }
 
   public function get_contact_by_id($contact_id): ?Contact {
@@ -121,9 +112,7 @@ class Contacts {
 
   public function create(array $IContact){
     // Enforce stuff
-    if(!isset($IContact['user_id'])){
-      throw new Exception('Created contacts must be supplied a user_id');
-    }
+    $IContact['user_id'] = $_SESSION['user_id'];
 
     # Fill with post data
     $contact = $this->_fill_contact($IContact);
@@ -223,8 +212,6 @@ class Contacts {
       'Address' => 3
     ];
 
-    var_dump($IContact['records']);
-
     // Upload the new contact records
     foreach($IContact['records'] as $record){
       $sth = $this->conn->prepare('
@@ -249,7 +236,6 @@ class Contacts {
       $sth->execute();
 
       error_log($sth->error);
-      var_dump($sth->error);
     }
 
     return $this->get_contact_by_id($contact_id);
@@ -297,10 +283,12 @@ class Contacts {
   }
 
   public function __construct(){
+    if(!isset($_SESSION) || !isset($_SESSION['user_id'])){
+      throw new Exception('You must be logged in to manage contacts');
+    }
+
     $databaseController = new Database();
     $this->conn = $databaseController->get_connection();
-    [$this->contacts_by_user, $this->contacts] = $this->_fill_contacts_by_user(json_decode(file_get_contents('data/contacts.json'), true));
-    $this->schema = json_decode(file_get_contents('data/schema.json'), true);
   }
 
 }

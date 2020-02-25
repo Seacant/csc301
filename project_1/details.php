@@ -1,12 +1,18 @@
 <?php
+  session_start();
+
+  if(!isset($_SESSION['user_id'])){
+    header('Location: login.php');
+    die();
+  }
+
   require_once('controllers/Users.php');
   require_once('controllers/Contacts.php');
 
   $UsersController = new Users();
   $ContactsController = new Contacts();
 
-  // TODO: Login
-  $user = $UsersController->get_user_by_id(1);
+  $user = $UsersController->get_user_by_id($_SESSION['user_id']);
 
   $contact = $ContactsController->get_contact_by_id($_GET['contact_id']);
 
