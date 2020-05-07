@@ -1,10 +1,6 @@
 <?php
-  session_start();
+  require_once('utilities/Session.php');
 
-  if(!isset($_SESSION['user_id'])){
-    header('Location: login.php');
-    die();
-  }
 
   require_once('controllers/Users.php');
   require_once('controllers/Contacts.php');
@@ -22,6 +18,7 @@
 <html>
   <head>
     <meta charset='utf-8' />
+    <title>Your Contacts</title>
 
     <!-- Bootstrap & Dark mode -->
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
@@ -44,7 +41,7 @@
 
         // Open new edit form
         contact_row.append(`
-          <form class='edit-form'>
+          <form class='edit-form' style='padding-top: 12px'>
             <ul class='list-group'>
               <li class='list-group-item form-group'>
                 <label class='text-info' for='edit-name'>Name: </label>
@@ -105,7 +102,15 @@
           }
         })
 
-        $('#edit-form-cancel').click(() => $('.edit-form').remove())
+        $('#edit-form-cancel').click((event) => {
+          const $contact = $(event.target).closest('.contact-root')
+          // If the edit form we cancelled is for a new (unsaved) contact,
+          // remove it
+          if($contact.hasClass('contact-new')){
+            $contact.remove()
+          }
+          $('.edit-form').remove()
+        })
 
         
         json.records.forEach((record) => {
@@ -214,23 +219,36 @@
 
   <body>
     <div class='container'>
-      <h1 class='text-center'>Your Contacts</h1>
-      <ul class='user_contacts list-group'>
-        <? foreach($contacts as $index => $contact): ?>
-        <li class='list-group-item contact-root' data-id='<?= $contact->id ?>'>
-          <div class="d-flex justify-content-between align-items-center">
-            <a href='details.php?contact_id=<?= $contact->id ?>'> <?= $contact->name ?></a>
-            <span>
-              <span><a href='#'><i data-id='<?= $contact->id ?>' class='edit_contact   material-icons text-primary'>edit  </i></a></span>
-              <span><a href='#'><i data-id='<?= $contact->id ?>' class='delete_contact material-icons text-danger '>delete</i></a></span>
-            </span>
-          </div>
-        </li>
-        <? endforeach; ?>
-        <li class='list-group-item'>
-          <a class='add_contact text-muted' href='#'>Add More</a>
-        </li>
-      </ul>
+      <div class='row justify-content-md-center'>
+        <h1 class='text-center'>Your Contacts</h1>
+      </div>
+      <div class='row justify-content-end'>
+        <span class='right' style='padding-right: 20px;'>
+          <? if ($user->id == 1): ?>
+            <a href='admin.php' class='text-muted' style='padding-right: 10px;'>Admin</a>
+          <? endif ?>
+          <a href='logout.php' class='text-muted'>Log Out</a>
+        </span>
+
+      </div>
+      <div class='row justify-content-md-center'>
+        <ul class='user_contacts list-group col-md-12'>
+          <? foreach($contacts as $index => $contact): ?>
+          <li class='list-group-item contact-root' data-id='<?= $contact->id ?>'>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href='details.php?contact_id=<?= $contact->id ?>'> <?= $contact->name ?></a>
+              <span>
+                <span><a href='#'><i data-id='<?= $contact->id ?>' class='edit_contact   material-icons text-primary'>edit  </i></a></span>
+                <span><a href='#'><i data-id='<?= $contact->id ?>' class='delete_contact material-icons text-danger '>delete</i></a></span>
+              </span>
+            </div>
+          </li>
+          <? endforeach; ?>
+          <li class='list-group-item'>
+            <a class='add_contact text-muted' href='#'>Add More</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </body>
 

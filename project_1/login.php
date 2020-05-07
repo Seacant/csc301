@@ -38,6 +38,7 @@
 <html>
   <head>
     <meta charset='utf-8' />
+    <title>Contact Login</title>
     
     <!-- Bootstrap & Dark mode -->
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
@@ -58,6 +59,8 @@
           $('form.login #username').before(`
             <input type='text' id='name' name='name' placeholder='name'>
           `)
+
+          $('.create-account').remove()
         })
       })
     </script>

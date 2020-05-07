@@ -1,10 +1,5 @@
 <?php
-  session_start();
-
-  if(!isset($_SESSION['user_id'])){
-    header('Location: login.php');
-    die();
-  }
+  require_once('utilities/Session.php');
 
   require_once('controllers/Users.php');
   require_once('controllers/Contacts.php');
@@ -27,6 +22,7 @@
 <html>
   <head>
     <meta charset='utf-8' />
+    <title><?= $contact->name ?></title>
 
     <!-- Bootstrap & Dark mode -->
     <link rel="stylesheet" href="/styles/bootstrap.min.css">

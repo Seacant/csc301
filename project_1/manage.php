@@ -1,10 +1,5 @@
 <?
-session_start();
-
-if(!isset($_SESSION['user_id'])){
-  header('Location: login.php');
-  die();
-}
+require_once('utilities/Session.php');
 
 require_once('controllers/Contacts.php');
 require_once('controllers/Users.php');

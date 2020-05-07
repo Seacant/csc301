@@ -64,6 +64,24 @@ class Users {
     return $this->login($username, $password);
   }
 
+  public function list_users() : Array {
+     $sth = $this->conn->prepare('
+      SELECT
+        user_id as id,
+        CONCAT(
+          COALESCE(first_name, ""),
+          IF(ISNULL(CONCAT(first_name,last_name)), "", " "),
+          COALESCE(last_name, "")
+        ) as name
+      FROM users
+    ');
+    $sth->execute();
+
+    $result = $sth->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    return (array_map([$this, '_fill_user'], $result ?? []));
+  }
+
   public function get_user_by_id(int $user_id) : ?User {
     $sth = $this->conn->prepare('
       SELECT
