@@ -16,9 +16,11 @@ class Users {
         username,
         first_name,
         last_name,
-        password
+        password,
+        role
       FROM users
       WHERE username = ?
+        AND deleted=0
     ');
     $sth->bind_param('s', $username);
     $sth->execute();
@@ -38,6 +40,7 @@ class Users {
       "id"       => $row['user_id'],
       "name"     => $row['first_name'] . ' ' . $row['last_name'],
       "username" => $row['username'],
+      "role"     => $row['role']
     ]);
   }
 
@@ -72,8 +75,10 @@ class Users {
           COALESCE(first_name, ""),
           IF(ISNULL(CONCAT(first_name,last_name)), "", " "),
           COALESCE(last_name, "")
-        ) as name
+        ) as name,
+        role
       FROM users
+      where deleted=0
     ');
     $sth->execute();
 
@@ -82,16 +87,31 @@ class Users {
     return (array_map([$this, '_fill_user'], $result ?? []));
   }
 
+  public function delete_user_by_id(int $user_id){
+    $sth = $this->conn->prepare('
+      UPDATE users
+      set deleted = 1
+      WHERE user_id = ?
+    ');
+    $sth->bind_param('i', $user_id);
+    $sth->execute();
+
+    return null;
+  }
+
   public function get_user_by_id(int $user_id) : ?User {
     $sth = $this->conn->prepare('
       SELECT
-        user_id,
-        username,
-        first_name,
-        last_name,
-        password
+        user_id as id,
+        CONCAT(
+          COALESCE(first_name, ""),
+          IF(ISNULL(CONCAT(first_name,last_name)), "", " "),
+          COALESCE(last_name, "")
+        ) as name,
+        role
       FROM users
       WHERE user_id = ?
+        AND deleted=0
     ');
     $sth->bind_param('i', $user_id);
     $sth->execute();
@@ -102,17 +122,15 @@ class Users {
       return null;
     }
 
-    return $this->_fill_user([
-      "id"       => $row['user_id'],
-      "name"     => $row['first_name'] . ' ' . $row['last_name'],
-      "username" => $row['username'],
-    ]);
+    return $this->_fill_user($row);
   }
 
   private function _fill_user(array $Iuser) : User{
+
     $user = new User();
     $user->id   = $Iuser['id'];
     $user->name = $Iuser['name'];
+    $user->role = $Iuser['role'];
     return $user;
   }
 }

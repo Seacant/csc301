@@ -224,7 +224,7 @@
       </div>
       <div class='row justify-content-end'>
         <span class='right' style='padding-right: 20px;'>
-          <? if ($user->id == 1): ?>
+          <? if ($user->is_manager()): ?>
             <a href='admin.php' class='text-muted' style='padding-right: 10px;'>Admin</a>
           <? endif ?>
           <a href='logout.php' class='text-muted'>Log Out</a>
